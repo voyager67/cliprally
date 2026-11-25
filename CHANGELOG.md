@@ -1,26 +1,23 @@
 # Changelog
 
-## [Unreleased]
+All notable changes to ClipRally are documented here.
 
-- Add optional OpenCV visual-activity detection using optical flow and shot-change heuristics, including hybrid and visual-only modes for silent/action footage.
-- Add UI and CLI controls for moment-detection mode and visual sampling interval.
+## 1.0.0
 
-# (Add upcoming changes here.)
+### Added
 
-# Release notes
+- Local-first processing for video files, with optional URL ingestion for media users are authorized to download and edit.
+- Optional Faster-Whisper transcription with word-level timestamps and heuristic moment ranking.
+- Optional Ollama, OpenAI, and Gemini scoring integrations.
+- OpenCV visual-activity analysis using optical flow and shot-change heuristics, with transcript-only, hybrid, and visual-only detection modes.
+- FFmpeg rendering of vertical 9:16 clips, including audio normalization and word-highlight captions.
+- Optional face-centred reframing, local browser UI, command-line interface, Python API, and MCP server.
+- RSS/Atom and YouTube chart discovery, editable title and hashtag suggestions, and JSON export manifests.
+- Optional YouTube, TikTok, and Instagram publishing adapters that require user-configured credentials and explicit publishing actions.
 
-## Stable release
+### Important limitations
 
-ClipRally provides a local-first video-to-shorts workflow with:
-
-- Local video inspection and optional URL ingestion through yt-dlp.
-- Offline word-timestamp transcription with Faster-Whisper.
-- Heuristic moment ranking and optional Ollama, OpenAI, or Gemini scoring.
-- Vertical FFmpeg rendering, loudness normalization, and word-highlight captions.
-- Optional OpenCV face-centred reframing.
-- RSS/Atom and YouTube chart discovery.
-- Editable offline title and hashtag suggestions with JSON manifests.
-- Local browser UI, command-line interface, Python API, and MCP server.
-- Explicit YouTube, TikTok, and Instagram publishing adapters.
-
-Current boundaries are documented in the README: face centering is not active-speaker diarization; automatic gameplay/facecam split-screen is not included; discovery does not download or repost content; and live platform behavior depends on third-party APIs, permissions, and account eligibility.
+- Visual analysis measures motion and shot changes; it does not identify semantic gameplay events, objects, actors, or named film scenes.
+- Face-centred reframing is not active-speaker tracking, and automatic gameplay/facecam split-screen is not included.
+- Third-party publishing and discovery behavior depends on platform APIs, permissions, account eligibility, and current terms.
+- ClipRally does not grant rights to media or guarantee reach, engagement, or virality.
