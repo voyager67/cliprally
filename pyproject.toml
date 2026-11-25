@@ -30,6 +30,7 @@ dependencies = []
 [project.optional-dependencies]
 transcription = ["faster-whisper>=1.1.0"]
 face-tracking = ["opencv-python-headless>=4.10"]
+visual-analysis = ["opencv-python-headless>=4.10"]
 url-ingest = ["yt-dlp>=2025.10.22"]
 youtube-publish = [
   "google-api-python-client>=2.150.0",
