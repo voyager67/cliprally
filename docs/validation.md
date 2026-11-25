@@ -25,6 +25,7 @@ This record distinguishes local processing paths exercised in this workspace fro
 ## Covered behavior
 
 - Transcript parsing, input timing validation, segment selection, heuristic ranking, and optional scorer request/response handling.
+- Visual activity scoring, candidate-window diversity, silent visual-only processing, hybrid fallback when no speech is detected, and generated test-video sampling (when OpenCV is installed).
 - ASS caption escaping and timing.
 - Real FFmpeg portrait MP4 creation, including audio/subtitle and loudness paths.
 - End-to-end processing of synthetic source footage with supplied word-level transcript timestamps.
@@ -40,6 +41,7 @@ This record distinguishes local processing paths exercised in this workspace fro
 - Live Ollama, OpenAI, or Gemini scoring requests.
 - Live YouTube, TikTok, or Meta OAuth, upload, app review, moderation, and publication results.
 - CUDA/cuDNN, NVENC, and VideoToolbox acceleration on user machines.
+- Semantic event recognition for specific gameplay actions, objects, actors, or movie scenes; current visual analysis is motion and shot-change heuristics only.
 - Ruff lint locally. Ruff was not installed and network restrictions prevented fetching it; Ruff remains configured in GitHub Actions.
 
 A passing local suite establishes only the behavior exercised by those tests. It does not guarantee that a third-party service, media source, app, or user account will accept every request. Before public launch, maintainers should also run the optional dependency smoke tests on representative Windows, macOS, and Linux machines.
