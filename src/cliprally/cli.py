@@ -53,6 +53,21 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     clip.add_argument("--min-duration", type=float, default=15.0)
     clip.add_argument("--max-duration", type=float, default=55.0)
+    clip.add_argument(
+        "--moment-mode",
+        choices=["transcript", "hybrid", "visual"],
+        default="transcript",
+        help=(
+            "transcript ranks speech only; hybrid blends speech with visual activity; "
+            "visual finds motion/shot-change windows without transcription"
+        ),
+    )
+    clip.add_argument(
+        "--visual-sample-interval",
+        type=float,
+        default=1.5,
+        help="Seconds between sampled frames in hybrid/visual mode (minimum 0.25)",
+    )
     clip.add_argument("--no-captions", action="store_true", help="Export clips without subtitles")
     clip.add_argument(
         "--face-tracking",
@@ -191,6 +206,8 @@ def _run_clip(args: argparse.Namespace) -> int:
         face_tracking=args.face_tracking,
         encoder=args.encoder,
         transcript_json=args.transcript_json,
+        moment_mode=args.moment_mode,
+        visual_sample_interval=args.visual_sample_interval,
     )
     print(json.dumps(manifest, indent=2, ensure_ascii=False))
     return 0
