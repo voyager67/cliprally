@@ -10,17 +10,14 @@ ClipRally is an open-source, local-first video-to-shorts workflow for creators, 
   <img src="docs/assets/pipeline.svg" alt="ClipRally local workflow: video, transcription, moment selection, vertical rendering, captions and export" width="100%" />
 </p>
 
-![Synthetic video before and after ClipRally processing](docs/assets/demo.gif)
-
-<p align="center"><em>The demo uses generated test footage, not a movie, streamer, or creator's content.</em></p>
 
 ## The product: local video to finished Shorts
 
 The main ClipRally workflow does **not** need an OpenAI key, Gemini key, YouTube API key, social account, hosted AI service, or paid clipping credits. Processing happens on the computer running ClipRally.
 
 1. **Choose a local video** you created, licensed, or have permission to edit.
-2. **Transcribe speech locally** with Faster-Whisper and word-level timestamps.
-3. **Find and rank moments** using the built-in, transparent heuristic scorer. No LLM account is required.
+2. **Analyse the source** with local Faster-Whisper speech timestamps, OpenCV visual-activity signals, or both.
+3. **Find and rank moments** using transcript and/or visual evidence. No hosted LLM account is required.
 4. **Create a vertical composition** with a 9:16 crop. Optional face-centering can follow the largest detected face.
 5. **Burn in word-highlight captions** and render an MP4 with FFmpeg.
 6. **Review and export** clips, a processing manifest, and editable title/hashtag suggestions.
@@ -77,7 +74,7 @@ Install the core local workflow and the optional browser interface:
 
 ```bash
 python -m pip install --upgrade pip
-python -m pip install -e ".[transcription,ui]"
+python -m pip install -e ".[transcription,visual-analysis,ui]"
 cliprally check
 ```
 
@@ -101,13 +98,14 @@ cliprally clip \
   --output ./clips \
   --clips 3 \
   --model-size small \
-  --scorer heuristic
+  --scorer heuristic \
+  --moment-mode hybrid
 ```
 
 PowerShell:
 
 ```powershell
-cliprally clip --input .\media\my-video.mp4 --output .\clips --clips 3 --model-size small --scorer heuristic
+cliprally clip --input .\media\my-video.mp4 --output .\clips --clips 3 --model-size small --scorer heuristic --moment-mode hybrid
 ```
 
 The first run downloads the selected Whisper model. `small` is a practical starting point; try `tiny` or `base` on lower-powered machines. The default video encoder is portable software H.264 (`libx264`). GPU encoding is optional and depends on the FFmpeg build and installed driver.
@@ -131,13 +129,43 @@ Each MP4 is rendered at 1080×1920 with H.264 video and AAC audio when the sourc
 |---|---|---|
 | Local video input | FFmpeg-readable video files | No |
 | Transcription | Faster-Whisper, local inference with word timestamps | No hosted API |
-| Moment selection | Heuristic ranking of transcript segments | No |
+| Moment selection | Transcript ranking, plus optional visual-activity windows in hybrid/visual mode | No |
+| Visual activity | OpenCV optical flow and shot-change heuristics | No hosted API |
 | 9:16 rendering | FFmpeg portrait output | No |
 | Captions | Word-timed ASS karaoke subtitles | No |
 | Title and hashtag suggestions | Offline transcript-based suggestions | No |
 | Processing manifest | JSON timings, scores, source and output details | No |
 
 The ranking score is an editing aid, not a prediction of virality. The built-in vocabulary works best for English. Other languages can be transcribed, but the scores and captions should be reviewed manually.
+
+
+## Visual highlight detection (gameplay and action footage)
+
+ClipRally can also analyse the pictures in a video, not only its transcript. Install the OpenCV extra (included in the `all` extra):
+
+```bash
+python -m pip install -e ".[visual-analysis]"
+```
+
+Choose one of three moment modes:
+
+- `transcript` — existing speech-first segmentation and ranking. This remains the CLI default for backwards compatibility.
+- `hybrid` — combines transcript ranking with visual activity. Use this for streams with commentary, podcasts with changing camera shots, and mixed content.
+- `visual` — skips Whisper and finds high-motion / shot-change windows. This works on silent recordings and is useful for gameplay or other action-heavy footage.
+
+Examples:
+
+```bash
+# Recommended for a creator stream with commentary
+cliprally clip --input ./media/stream.mp4 --output ./clips --moment-mode hybrid --clips 5
+
+# For silent gameplay or action footage
+cliprally clip --input ./media/gameplay.mp4 --output ./clips --moment-mode visual --clips 5
+```
+
+The first implementation uses local OpenCV optical flow and grayscale-histogram changes sampled at a configurable interval (`--visual-sample-interval`, default 1.5 seconds). The detector ranks windows with sustained motion and scene changes, then avoids returning many near-duplicate time ranges. In the browser UI, choose **Hybrid — speech + visual activity** or **Visual activity only**.
+
+**Important limitation:** this is activity detection, not semantic understanding. It can surface rapid movement, camera changes, and action-heavy sections even when nobody speaks. It does not know that a GTA clip contains a kill, race win, stunt, or funny moment; it cannot identify an actor or locate a named scene in a film. High motion can also mean an unimportant camera pan or transition. Review every result. Visual-only clips have no word captions unless a transcript is supplied through a future multimodal workflow.
 
 ## Optional local AI ranking with Ollama
 
@@ -236,7 +264,7 @@ Tests use generated synthetic media and mocked provider responses. They do not d
 
 ## Current boundaries
 
-ClipRally is focused on dependable local video-to-vertical-clip processing. It is not an autonomous content farm, a copyright-clearing service, or a guaranteed viral-content predictor. Active-speaker diarization, gameplay/facecam split-screen, automatic social scheduling, and live analytics are not included in the core project.
+ClipRally is focused on dependable local video-to-vertical-clip processing. It is not an autonomous content farm, a copyright-clearing service, or a guaranteed viral-content predictor. Semantic gameplay-event recognition (kills, wins, stunts), named movie-scene search, active-speaker diarization, gameplay/facecam split-screen, automatic social scheduling, and live analytics are not included. Current visual analysis measures motion and shot changes; it does not understand what an event means.
 
 ## License
 
