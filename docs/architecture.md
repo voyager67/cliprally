@@ -9,13 +9,18 @@ Local video / authorized URL
       FFprobe validation
            │
            ▼
-  Faster-Whisper word timestamps
+  Faster-Whisper word timestamps (optional in visual mode)
            │
            ▼
   Candidate segment construction
            │
-           ▼
- Heuristic / Ollama / OpenAI / Gemini ranking
+           ├───────────────┐
+           ▼               ▼
+ Transcript ranking   OpenCV visual activity
+ (heuristic / LLM)   (optical flow + shot changes)
+           └───────┬───────┘
+                   ▼
+             Hybrid ranking
            │
            ▼
  Optional OpenCV face-centred crop
@@ -35,7 +40,8 @@ Local video / authorized URL
 - `media.py`: FFprobe inspection and FFmpeg binary discovery.
 - `ingestion.py`: optional yt-dlp downloader with HTTP(S)-only URLs, a rights confirmation, an isolated output directory, and a timeout.
 - `transcription.py`: local Faster-Whisper word timestamps.
-- `moments.py`: candidate segmentation, local heuristic ranking, and optional LLM scoring.
+- `moments.py`: transcript candidate segmentation, local heuristic ranking, and optional LLM scoring.
+- `visual.py`: optional OpenCV optical-flow and shot-change analysis. It proposes action-heavy time windows but does not classify game events or scene meaning.
 - `reframe.py`: sampled OpenCV face-centering heuristic. It is not speaker diarization.
 - `captions.py`: safe ASS subtitle generation with word-level karaoke timing.
 - `render.py`: portrait crop, caption burn-in, audio normalization, and MP4 encoding.
@@ -53,3 +59,11 @@ Local video / authorized URL
 - Trend discovery returns links for review; it does not claim that reuse is authorized.
 - Publisher adapters send media or a hosted media URL only when invoked explicitly. Platform credentials, approvals, and account eligibility remain user responsibilities.
 - The local UI and MCP server have the same filesystem access as the user running them; do not expose them to untrusted networks or clients.
+
+## Moment detection modes
+
+- `transcript`: segment and rank spoken content. This is the CLI compatibility default.
+- `hybrid`: rank transcript candidates, blend in visual activity, and add non-overlapping visual windows. If Whisper detects no words, hybrid mode can continue with visual candidates.
+- `visual`: skip transcription and rank visual-activity windows. This supports silent gameplay and other sources without intelligible speech.
+
+Visual activity samples are resized before analysis. Optical-flow magnitude estimates frame-to-frame motion, while grayscale histogram distance provides a lightweight shot-change signal. Candidate scores are heuristic measurements, not probabilities or semantic labels.
