@@ -13,7 +13,7 @@ This record distinguishes local processing paths exercised in this workspace fro
 ## Checks run
 
 - `python -m compileall -q src tests` — passed.
-- `pytest -q` — 26 tests passed, including real FFmpeg rendering and mocked publisher adapter tests.
+- `pytest -q` — 33 tests passed, including real FFmpeg rendering and mocked publisher adapter tests.
 - `python -m cliprally check` — passed; FFmpeg and FFprobe were found.
 - `python -m cliprally --help` and `python -m cliprally clip --help` — passed.
 - Built the wheel with `pip wheel . --no-deps --no-build-isolation` — passed.
