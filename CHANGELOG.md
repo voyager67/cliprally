@@ -1,3 +1,12 @@
+# Changelog
+
+## [Unreleased]
+
+- Add optional OpenCV visual-activity detection using optical flow and shot-change heuristics, including hybrid and visual-only modes for silent/action footage.
+- Add UI and CLI controls for moment-detection mode and visual sampling interval.
+
+# (Add upcoming changes here.)
+
 # Release notes
 
 ## Stable release
