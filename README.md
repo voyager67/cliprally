@@ -232,7 +232,7 @@ OpenAI Responses API and Gemini scoring adapters are available for users who exp
 Install the optional MCP dependency and launch the local stdio server:
 
 ```bash
-python -m pip install -e ".[mcp,transcription]"
+python -m pip install -e ".[mcp,transcription,visual-analysis]"
 cliprally-mcp
 ```
 
