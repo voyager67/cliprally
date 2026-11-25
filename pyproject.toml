@@ -1,0 +1,78 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cliprally"
+version = "1.0.0"
+description = "Local-first video-to-shorts workflow with transcription, moment ranking, captions, and FFmpeg rendering."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "ClipRally contributors" }]
+keywords = ["ai-video-clipper", "video-to-shorts", "youtube-shorts", "reels", "tiktok", "whisper", "ollama", "ffmpeg", "open-source"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Multimedia :: Video",
+]
+dependencies = []
+
+[project.optional-dependencies]
+transcription = ["faster-whisper>=1.1.0"]
+face-tracking = ["opencv-python-headless>=4.10"]
+url-ingest = ["yt-dlp>=2025.10.22"]
+youtube-publish = [
+  "google-api-python-client>=2.150.0",
+  "google-auth-oauthlib>=1.2.1",
+  "google-auth-httplib2>=0.2.0",
+]
+mcp = ["mcp>=1.28,<2"]
+ui = ["streamlit>=1.42"]
+dev = ["pytest>=8.0", "ruff>=0.8", "mypy>=1.13"]
+all = [
+  "faster-whisper>=1.1.0",
+  "opencv-python-headless>=4.10",
+  "yt-dlp>=2025.10.22",
+  "google-api-python-client>=2.150.0",
+  "google-auth-oauthlib>=1.2.1",
+  "google-auth-httplib2>=0.2.0",
+  "mcp>=1.28,<2",
+  "streamlit>=1.42",
+]
+
+[project.scripts]
+cliprally = "cliprally.cli:main"
+cliprally-mcp = "cliprally.mcp_server:main"
+cliprally-ui = "cliprally.ui:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_unused_ignores = true

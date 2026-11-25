@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+
+# Build output
+build/
+dist/
+cliprally-output/
+clips/
+
+# Secrets and credentials
+.env
+.env.*
+!.env.example
+*client_secret*.json
+client_secrets.json
+credentials.json
+*token*.json
+*.pem
+*.key
+
+# Local media and models
+media/
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.wav
+*.mp3
+*.srt
+*.ass
+models/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

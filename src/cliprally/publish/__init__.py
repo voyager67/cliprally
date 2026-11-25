@@ -1,0 +1,1 @@
+"""Optional official-platform publishing adapters."""
