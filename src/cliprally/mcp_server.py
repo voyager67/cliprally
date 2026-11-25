@@ -26,14 +26,18 @@ def create_server() -> Any:
         scorer: str = "heuristic",
         face_tracking: bool = False,
         rights_confirmed: bool = False,
+        moment_mode: str = "transcript",
+        min_duration: float = 15.0,
+        max_duration: float = 55.0,
+        visual_sample_interval: float = 1.5,
     ) -> str:
-        """Create clips from a local video; caller must confirm media-use authorization."""
+        """Create local clips using transcript, hybrid, or visual activity detection."""
         if not rights_confirmed:
             return json.dumps(
                 {
                     "error": (
                         "Set rights_confirmed=true only after confirming you may edit "
-                        "and publish this media."
+                        "and share clips from this media."
                     )
                 }
             )
@@ -47,6 +51,10 @@ def create_server() -> Any:
             clips=clips,
             scorer=scorer,
             face_tracking=face_tracking,
+            moment_mode=moment_mode,
+            min_duration=min_duration,
+            max_duration=max_duration,
+            visual_sample_interval=visual_sample_interval,
         )
         return json.dumps(manifest, indent=2)
 
