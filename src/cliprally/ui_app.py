@@ -25,8 +25,28 @@ with st.sidebar:
     )
     device = st.selectbox("Compute device", ["auto", "cpu", "cuda"], index=0)
     compute_type = st.selectbox("Compute type", ["int8", "float16", "float32"], index=0)
-    scorer = st.selectbox("Moment ranking", ["heuristic", "ollama", "openai", "gemini"])
+    moment_mode = st.selectbox(
+        "How should ClipRally find moments?",
+        ["hybrid", "transcript", "visual"],
+        format_func={
+            "hybrid": "Hybrid — speech + visual activity (recommended)",
+            "transcript": "Speech / transcript only",
+            "visual": "Visual activity only — no transcription",
+        }.get,
+        help=(
+            "Visual analysis measures motion and shot changes. It can surface action-heavy "
+            "gameplay, but it does not identify specific objects or game events yet. "
+            "Requires the visual-analysis extra."
+        ),
+    )
+    scorer = st.selectbox("Transcript ranking", ["heuristic", "ollama", "openai", "gemini"])
     scorer_model = st.text_input("Model override (optional)", value="")
+    visual_sample_interval = st.select_slider(
+        "Visual sampling interval",
+        options=[0.5, 1.0, 1.5, 2.0, 3.0],
+        value=1.5,
+        help="Smaller intervals can catch faster changes but take longer to analyse.",
+    )
     language = st.text_input("Language code (optional)", value="", placeholder="en, hi, mr…")
     min_duration = st.slider("Minimum clip length (seconds)", 5, 45, 15)
     max_duration = st.slider(
@@ -82,7 +102,7 @@ if st.button("Create my clips", type="primary", disabled=not source_ready):
                 st.stop()
         output_path = workspace / "clips"
         try:
-            with st.spinner("Transcribing, ranking, and rendering clips on this machine…"):
+            with st.spinner("Analysing the video, finding moments, and rendering clips locally…"):
                 manifest = process_video(
                     source_path,
                     output_path,
@@ -93,6 +113,8 @@ if st.button("Create my clips", type="primary", disabled=not source_ready):
                     language=language.strip() or None,
                     scorer=scorer,
                     scorer_model=scorer_model.strip() or None,
+                    moment_mode=moment_mode,
+                    visual_sample_interval=float(visual_sample_interval),
                     min_duration=float(min_duration),
                     max_duration=float(max_duration),
                     captions=captions,
@@ -108,9 +130,15 @@ manifest = st.session_state.get("cliprally_manifest")
 if manifest:
     st.subheader("Your clips")
     st.caption(
+        f"Detection: {manifest.get('moment_mode', 'transcript')} · "
         f"Transcript language: {manifest['transcript'].get('language') or 'not detected'} · "
         f"Ranking: {manifest['scorer']}"
     )
+    if manifest.get("visual_analysis", {}).get("enabled"):
+        st.caption(
+            f"Visual scan: {manifest['visual_analysis']['samples_analysed']} frames sampled · "
+            "motion + shot-change signals (not semantic event recognition)"
+        )
     for index, item in enumerate(manifest["clips"], start=1):
         left, right = st.columns([1.15, 1])
         with left:
@@ -154,8 +182,9 @@ if manifest:
     )
 else:
     st.markdown(
-        """**No cloud account is needed for local clipping.** The default heuristic ranker, """
-        """local Whisper transcription, captions, and FFmpeg rendering run on your machine. """
-        """Ollama is optional for local LLM-based ranking; OpenAI and Gemini are """
-        """optional hosted services."""
+        """**No cloud account is needed for local clipping.** Hybrid mode combines local Whisper """
+        """transcription with OpenCV motion and shot-change analysis. Visual-only mode can find """
+        """action-heavy windows even when a video has no speech. It does not yet recognise """
+        """specific objects or game events. Ollama is optional for local LLM ranking; OpenAI """
+        """and Gemini are optional hosted services."""
     )
