@@ -33,7 +33,7 @@ def _video_filter(
         filters = [f"crop=w={crop_width:.3f}:h=ih:x='{x_expression}':y=0"]
     else:
         crop_height = width * 16 / 9
-        y_expression = f"max(0,min(ih-oh,(ih-oh)/2))"
+        y_expression = "max(0,min(ih-oh,(ih-oh)/2))"
         filters = [f"crop=w=iw:h={crop_height:.3f}:x=0:y='{y_expression}'"]
     filters.extend(["scale=1080:1920:flags=lanczos", "setsar=1"])
     if subtitle_path is not None:

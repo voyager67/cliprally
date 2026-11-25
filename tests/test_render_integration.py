@@ -112,6 +112,7 @@ def test_full_pipeline_from_transcript_json(tmp_path) -> None:
         for word, start in zip(
             ["This", "is", "a", "complete", "local", "ClipRally", "pipeline", "test.", "outside"],
             [0.2, 0.5, 0.8, 1.1, 1.5, 1.9, 2.5, 3.0, 4.8],
+            strict=False,
         )
     ]
     transcript.write_text(json.dumps({"language": "en", "words": words}), encoding="utf-8")

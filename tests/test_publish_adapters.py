@@ -5,8 +5,8 @@ from unittest.mock import patch
 
 import pytest
 
-from cliprally.models import Word
 from cliprally.metadata import suggest_metadata
+from cliprally.models import Word
 
 
 def test_suggest_metadata_is_offline_editable_and_unicode_aware() -> None:
