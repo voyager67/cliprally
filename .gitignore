@@ -16,6 +16,12 @@ dist/
 cliprally-output/
 clips/
 
+# Local release artifacts (generate from a clean source checkout)
+downloads/
+*.whl
+*.tar.gz
+*.zip
+
 # Secrets and credentials
 .env
 .env.*
